@@ -1,17 +1,49 @@
-import './App.css'
-import { Navbar } from './components/Nav'
-import Home from './components/Home'
-import Footer from './components/Footer'
+import "./App.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
+
+import Home from "./components/Home";
+import Footer from "./components/Footer";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
+import Nav from "./components/Nav";
 
 function App() {
+  const [user, setUser] = useState(null);
+
+  // ✅ Check token on mount
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        setUser(decoded);
+      } catch (err) {
+        console.error("Invalid token", err);
+        setUser(null);
+      }
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setUser(null);
+  };
 
   return (
-    <>
-      <Navbar />
-      <Home />
+    <Router>
+<Nav user={user} onLogout={handleLogout} />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login setUser={setUser} />} />
+      </Routes>
+
       <Footer />
-    </>
-  )
+    </Router>
+  );
 }
 
-export default App
+export default App;
