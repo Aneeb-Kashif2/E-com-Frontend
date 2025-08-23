@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // ✅ import decoder
+import { Navigate, useNavigate } from "react-router-dom";
 
 function Login({ setUser }) {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -26,6 +28,8 @@ function Login({ setUser }) {
       }
 
       setMessage(response.data.message || "Login successful 🎉");
+      navigate("/");
+      
     } catch (err) {
       console.error("Error:", err);
       setMessage("Login failed ❌");

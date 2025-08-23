@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Nav from "./components/Nav";
+import AllProduct from "./pages/AllProduct";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -37,6 +38,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/shop/all-products" element={<AllProduct />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
       </Routes>

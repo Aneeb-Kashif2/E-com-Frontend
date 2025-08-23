@@ -1,14 +1,14 @@
 import React from 'react'
 import { Hero } from '../pages/Hero'
 import { FeaturedCategories } from '../pages/Hero';
-import { FeaturedProducts } from '../pages/Hero';
+import AllProduct from '../pages/AllProduct';
 
 function Home() {
   return (
     <div>
       <Hero />
       <FeaturedCategories />
-      <FeaturedProducts />
+      <AllProduct />
     </div>
   )
 }

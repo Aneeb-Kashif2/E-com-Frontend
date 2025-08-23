@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AllProduct from './AllProduct';
  export const Hero = () => {
   const slides = [
     {
@@ -145,40 +146,7 @@ export const FeaturedCategories = () => {
 };
 
 
-export const FeaturedProducts = () => {
-  const products = [
-    { id: 1, name: 'Minimalist Sneaker', price: '$85.00', image: 'https://source.unsplash.com/400x400/?sneaker' },
-    { id: 2, name: 'Smart Watch 2.0', price: '$199.99', image: 'https://source.unsplash.com/400x400/?smart-watch' },
-    { id: 3, name: 'Classic Denim Jacket', price: '$60.00', image: 'https://source.unsplash.com/400x400/?denim-jacket' },
-    { id: 4, name: 'Noise-Cancelling Headphones', price: '$249.00', image: 'https://source.unsplash.com/400x400/?headphones' },
-    { id: 5, name: 'Vintage Leather Bag', price: '$120.00', image: 'https://source.unsplash.com/400x400/?leather-bag' },
-    { id: 6, name: 'Portable Bluetooth Speaker', price: '$75.00', image: 'https://source.unsplash.com/400x400/?bluetooth-speaker' },
-  ];
 
-  return (
-    <section className="mb-12">
-      <h2 className="text-3xl font-bold text-gray-800 text-center mb-8">Featured Products</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((product) => (
-          <div key={product.id} className="bg-white rounded-xl shadow-lg overflow-hidden group hover:shadow-xl transition-shadow duration-300">
-            <img
-              src={product.image}
-              alt={product.name}
-              className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
-            />
-            <div className="p-5 text-center">
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">{product.name}</h3>
-              <p className="text-lg text-gray-600 mb-4">{product.price}</p>
-              <button className="bg-indigo-600 text-white font-bold py-2 px-6 rounded-full hover:bg-indigo-700 transition-colors duration-300">
-                Add to Cart
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-};
 
 const Footer = () => {
   return (
