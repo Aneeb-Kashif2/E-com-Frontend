@@ -14,12 +14,14 @@ const sectionFade = {
   show: { opacity: 1, y: 0, transition: { duration: 0.6 } },
 };
 
-
+/***********************************
+ * Hero Section
+ ***********************************/
 export const Hero = () => {
   const slides = [
     {
       id: 1,
-      backgroundImage: "url('https://images.unsplash.com/photo-1606788075761-5c3e1a2a1e42')",
+      backgroundImage: "url('/hero.png')",
       title: "Fresh Groceries, Delivered to You",
       description: "Get vegetables, fruits, and daily essentials at the best prices.",
       buttonText: "Shop Fresh Produce",
@@ -27,7 +29,7 @@ export const Hero = () => {
     },
     {
       id: 2,
-      backgroundImage: "url('https://images.unsplash.com/photo-1590080876023-92af3f7a8a1c')",
+      backgroundImage: "url('/BudgetPlanner.png')",
       title: "Smart Grocery Planning",
       description: "Enter your budget and let AI plan your monthly groceries.",
       buttonText: "Try Budget Planner",
@@ -35,7 +37,7 @@ export const Hero = () => {
     },
     {
       id: 3,
-      backgroundImage: "url('https://images.unsplash.com/photo-1626074243925-5dffeb2c3f45')",
+      backgroundImage: "url('/hero.png')",
       title: "Household Essentials",
       description: "Cleaning supplies, oils, rice, and more — everything in one place.",
       buttonText: "Shop Essentials",
@@ -59,30 +61,23 @@ export const Hero = () => {
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${i === current ? "opacity-100" : "opacity-0"}`}
             style={{ backgroundImage: s.backgroundImage, backgroundSize: "cover", backgroundPosition: "center" }}
           >
-            <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-center p-4">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+            <div className="absolute inset-0 bg-black/40 flex items-center p-8">
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
-                className="text-white text-3xl md:text-5xl font-extrabold mb-4"
+                className="max-w-xl text-left"
               >
-                {s.title}
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.6 }}
-                className="text-gray-200 text-lg md:text-xl mb-6 max-w-2xl"
-              >
-                {s.description}
-              </motion.p>
-              <motion.button
-                whileTap={{ scale: 0.97 }}
-                onClick={s.onClick}
-                className="bg-blue-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-300"
-              >
-                {s.buttonText}
-              </motion.button>
+                <h2 className="text-white text-3xl md:text-5xl font-extrabold mb-4">{s.title}</h2>
+                <p className="text-gray-200 text-lg md:text-xl mb-6">{s.description}</p>
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  onClick={s.onClick}
+                  className="bg-blue-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-300"
+                >
+                  {s.buttonText}
+                </motion.button>
+              </motion.div>
             </div>
           </div>
         ))}
@@ -307,7 +302,6 @@ const GroceryHomePage = () => {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      
       <BudgetPlanner />
 
       <section className="px-4 sm:px-6 lg:px-8 py-10 max-w-7xl mx-auto">
