@@ -1,38 +1,40 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // ✅ import decoder
-import { Navigate, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 
 function Login({ setUser }) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+   const { fetchCart } = useCart(); 
 
   const UserLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:8000/login", 
+        { email, password },
+        { withCredentials: true }
+      );
 
-      // ✅ Store token in localStorage
+      setMessage(response.data.message || "Login successful 🎉");
+      
+      // Store token in localStorage as backup
       const token = response.data.token;
       if (token) {
         localStorage.setItem("token", token);
-
-        // ✅ Decode token and update user state
         const decoded = jwtDecode(token);
         setUser(decoded);
+        await fetchCart();
       }
-
-      setMessage(response.data.message || "Login successful 🎉");
-      navigate("/");
       
+      navigate("/");
     } catch (err) {
       console.error("Error:", err);
-      setMessage("Login failed ❌");
+      setMessage(err.response?.data?.message || "Login failed ❌");
     }
   };
 
@@ -79,6 +81,12 @@ function Login({ setUser }) {
             {message}
           </p>
         )}
+        <p className="mt-4 text-center text-gray-400">
+          Don't have an account?{" "}
+          <a href="/signup" className="text-indigo-400 hover:underline">
+            Sign up
+          </a>
+        </p>
       </div>
     </div>
   );

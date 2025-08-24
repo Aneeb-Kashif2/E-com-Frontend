@@ -1,3 +1,4 @@
+// App.js
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -10,6 +11,10 @@ import Nav from "./components/Nav";
 import AllProduct from "./pages/AllProduct";
 import CategoryProducts from "./pages/CategoryProducts";
 import ShowAllProductsAndCartLogic from "./components/ShowAllProductsAndCartLogic";
+import Cart from "./pages/Cart";
+
+// ✅ import CartProvider
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -35,18 +40,22 @@ function App() {
 
   return (
     <Router>
-<Nav user={user} onLogout={handleLogout} />
+      {/* ✅ Wrap everything inside CartProvider */}
+      <CartProvider>
+        <Nav user={user} onLogout={handleLogout} />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<ShowAllProductsAndCartLogic />} />
-        <Route path="/shop/all-products" element={<AllProduct />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/category/:categoryId" element={<CategoryProducts />} />
-      </Routes>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/shop" element={<ShowAllProductsAndCartLogic />} />
+          <Route path="/shop/all-products" element={<AllProduct />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login setUser={setUser} />} />
+          <Route path="/category/:categoryId" element={<CategoryProducts />} />
+        </Routes>
 
-      <Footer />
+        <Footer />
+      </CartProvider>
     </Router>
   );
 }

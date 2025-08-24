@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { useCart } from "../context/CartContext";
 
 const API_BASE = "http://localhost:8000";
 const currency = (n) =>
@@ -15,6 +16,8 @@ const CategoryProducts = () => {
   const [products, setProducts] = useState([]);
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const { addToCart, cart } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -31,18 +34,8 @@ const CategoryProducts = () => {
     fetchProducts();
   }, [categoryId]);
 
-  const handleAddToCart = async (product) => {
-    try {
-      await axios.post(
-        `${API_BASE}/cart/add`,
-        { productId: product._id, qty: 1 },
-        { withCredentials: true }
-      );
-      alert(`${product.name} added to cart!`);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to add to cart");
-    }
+  const handleAddToCart = (product) => {
+    addToCart(product._id, 1);
   };
 
   if (loading)

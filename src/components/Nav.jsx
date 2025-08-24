@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShoppingCart, User, Search, AlignRight } from "lucide-react";
+import { ShoppingCart, Search, AlignRight } from "lucide-react";
+import { useCart } from "../context/CartContext";
 
 const Nav = ({ user, onLogout }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { cartCount } = useCart();
 
   const isLoggedIn = !!user;
   const isAdmin = user?.role === "admin";
@@ -35,16 +37,9 @@ const Nav = ({ user, onLogout }) => {
 
           {isLoggedIn && (
             <>
-              <Link to="/orders" className="text-gray-600 hover:text-indigo-600">
-                My Orders
-              </Link>
+              <Link to="/orders" className="text-gray-600 hover:text-indigo-600">My Orders</Link>
               {isAdmin && (
-                <Link
-                  to="/admin"
-                  className="text-red-600 font-semibold hover:text-red-700"
-                >
-                  Admin
-                </Link>
+                <Link to="/admin" className="text-red-600 font-semibold hover:text-red-700">Admin</Link>
               )}
             </>
           )}
@@ -70,28 +65,23 @@ const Nav = ({ user, onLogout }) => {
             </>
           ) : (
             <>
-              <Link to="/login" className="py-2 px-4 text-indigo-600 hover:text-indigo-800">
-                Log In
-              </Link>
-              <Link
-                to="/signup"
-                className="py-2 px-4 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700"
-              >
-                Sign Up
-              </Link>
+              <Link to="/login" className="py-2 px-4 text-indigo-600 hover:text-indigo-800">Log In</Link>
+              <Link to="/signup" className="py-2 px-4 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700">Sign Up</Link>
             </>
           )}
 
-          {/* Cart */}
-          <button
-            aria-label="Shopping Cart"
-            className="text-gray-600 hover:text-indigo-600 relative"
-          >
-            <ShoppingCart size={20} />
-            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
-              3
-            </span>
-          </button>
+         {/* Cart */}
+<button
+  aria-label="Shopping Cart"
+  className="text-gray-600 hover:text-indigo-600 relative"
+  onClick={() => navigate("/cart")} // ✅ navigate to /cart on click
+>
+  <ShoppingCart size={20} />
+  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
+    {cartCount}
+  </span>
+</button>
+
 
           {/* Mobile menu */}
           <button
@@ -114,13 +104,9 @@ const Nav = ({ user, onLogout }) => {
 
           {isLoggedIn ? (
             <>
-              <Link to="/orders" className="block px-4 py-3 text-gray-600 hover:text-indigo-600">
-                My Orders
-              </Link>
+              <Link to="/orders" className="block px-4 py-3 text-gray-600 hover:text-indigo-600">My Orders</Link>
               {isAdmin && (
-                <Link to="/admin" className="block px-4 py-3 text-red-600 font-semibold hover:text-red-700">
-                  Admin
-                </Link>
+                <Link to="/admin" className="block px-4 py-3 text-red-600 font-semibold hover:text-red-700">Admin</Link>
               )}
               <button
                 onClick={handleLogout}
@@ -131,9 +117,7 @@ const Nav = ({ user, onLogout }) => {
             </>
           ) : (
             <>
-              <Link to="/login" className="block px-4 py-3 text-indigo-600 hover:text-indigo-800">
-                Log In
-              </Link>
+              <Link to="/login" className="block px-4 py-3 text-indigo-600 hover:text-indigo-800">Log In</Link>
               <Link
                 to="/signup"
                 className="block px-4 py-3 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 text-center"

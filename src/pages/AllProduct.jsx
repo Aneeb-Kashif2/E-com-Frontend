@@ -1,9 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useCart } from "../context/CartContext.jsx"; // ✅ FIXED import
 
 function AllProduct() {
   const [products, setProducts] = useState([]);
+  const { addToCart } = useCart(); // ✅ use hook to access addToCart
 
   const fetchProducts = async () => {
     try {
@@ -72,7 +74,10 @@ function AllProduct() {
                 </p>
 
                 {/* Button */}
-                <button className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 transform hover:scale-[1.02] transition-all duration-300 ease-out">
+                <button
+                  onClick={() => addToCart(product._id, 1)} // ✅ works now
+                  className="w-full bg-indigo-600 text-white font-semibold py-2 rounded-lg hover:bg-indigo-700 transform hover:scale-[1.02] transition-all duration-300 ease-out"
+                >
                   Add to Cart
                 </button>
               </div>
