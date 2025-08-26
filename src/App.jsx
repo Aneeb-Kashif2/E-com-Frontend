@@ -12,7 +12,7 @@ import AllProduct from "./pages/AllProduct";
 import CategoryProducts from "./pages/CategoryProducts";
 import ShowAllProductsAndCartLogic from "./components/ShowAllProductsAndCartLogic";
 import Cart from "./pages/Cart";
-
+import Checkout from "./pages/Checkout";
 // ✅ import CartProvider
 import { CartProvider } from "./context/CartContext";
 
@@ -46,6 +46,7 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/checkout" element={<Checkout />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/shop" element={<ShowAllProductsAndCartLogic />} />
           <Route path="/shop/all-products" element={<AllProduct />} />
