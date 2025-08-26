@@ -12,31 +12,38 @@ function Login({ setUser }) {
    const { fetchCart } = useCart(); 
 
   const UserLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/login", 
-        { email, password },
-        { withCredentials: true }
-      );
+  e.preventDefault();
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/login", 
+      { email, password },
+      { withCredentials: true }
+    );
 
-      setMessage(response.data.message || "Login successful 🎉");
-      
-      // Store token in localStorage as backup
-      const token = response.data.token;
-      if (token) {
-        localStorage.setItem("token", token);
-        const decoded = jwtDecode(token);
-        setUser(decoded);
-        await fetchCart();
+    setMessage(response.data.message || "Login successful 🎉");
+    
+    const token = response.data.token;
+    if (token) {
+      localStorage.setItem("token", token);
+      const decoded = jwtDecode(token);
+      setUser(decoded);
+
+      // Fetch cart after login
+      await fetchCart();
+
+      // Redirect based on role
+      if (decoded.role === "admin" || decoded.role === "subadmin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/");
       }
-      
-      navigate("/");
-    } catch (err) {
-      console.error("Error:", err);
-      setMessage(err.response?.data?.message || "Login failed ❌");
     }
-  };
+  } catch (err) {
+    console.error("Error:", err);
+    setMessage(err.response?.data?.message || "Login failed ❌");
+  }
+};
+
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">
