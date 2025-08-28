@@ -5,12 +5,12 @@ import { FaCreditCard, FaTruck } from "react-icons/fa";
 import { AnimatePresence, motion } from "framer-motion";
 import { loadStripe } from "@stripe/stripe-js";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY); // ⬅️ use your pk_test key
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY); // your pk_test key
 
 const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId"); // ⬅️ store this when user logs in
+  const userId = localStorage.getItem("userId");
   const { cart } = useCart();
 
   const subtotal =
@@ -20,45 +20,47 @@ const Checkout = () => {
     ) || 0;
 
   // ✅ Place order handler
-  const placeOrder = async () => {
-    try {
-      if (paymentMethod === "cod") {
-        // 🟢 COD -> call normal order route
-        const res = await axios.post(
-          "http://localhost:8000/order/place",
-          { paymentMethod },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        alert(`✅ Order placed successfully with COD`);
-        console.log(res.data);
-      } else if (paymentMethod === "stripe") {
-        // 🟢 Stripe -> create checkout session
-        const stripe = await stripePromise;
+const placeOrder = async () => {
+  try {
+    if (paymentMethod === "cod") {
+      // 🟢 COD -> directly create order
+      const res = await axios.post(
+        "http://localhost:8000/order/place",
+        { paymentMethod },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert(`✅ Order placed successfully with COD`);
+      console.log(res.data);
 
-        const res = await axios.post(
-          "http://localhost:8000/create-checkout-session",
-          {
-            userId,
-            cartItems: cart.items.map((item) => ({
-              _id: item.productId._id,
-              name: item.productId.name,
-              price: item.productId.price,
-              quantity: item.quantity,
-            })),
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+    } else if (paymentMethod === "stripe") {
+      // 🟢 Stripe -> only create checkout session (❌ don't create order here)
+      const stripe = await stripePromise;
 
-        const { id: sessionId } = res.data;
+      const res = await axios.post(
+        "http://localhost:8000/create-checkout-session",
+        {
+          userId,
+          cartItems: cart.items.map((item) => ({
+            _id: item.productId._id,
+            name: item.productId.name,
+            price: item.productId.price,
+            quantity: item.quantity,
+          })),
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-        // Redirect to Stripe Checkout
-        await stripe.redirectToCheckout({ sessionId });
-      }
-    } catch (err) {
-      console.error("❌ Checkout error:", err.response?.data || err.message);
-      alert("❌ Failed to place order");
+      const { id: sessionId } = res.data;
+
+      // Redirect to Stripe Checkout
+      await stripe.redirectToCheckout({ sessionId });
     }
-  };
+  } catch (err) {
+    console.error("❌ Checkout error:", err.response?.data || err.message);
+    alert("❌ Failed to place order");
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 lg:px-8 font-sans">
@@ -129,7 +131,7 @@ const Checkout = () => {
           {/* Subtotal */}
           <div className="flex justify-between text-lg font-medium mb-6">
             <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>Rs .{subtotal.toFixed(2)}</span>
           </div>
 
           {/* Payment Options */}

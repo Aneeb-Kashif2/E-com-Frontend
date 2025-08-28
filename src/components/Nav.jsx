@@ -106,7 +106,7 @@ const Nav = ({ user, onLogout }) => {
             <>
               <Link to="/orders" className="block px-4 py-3 text-gray-600 hover:text-indigo-600">My Orders</Link>
               {isAdmin && (
-                <Link to="/admin" className="block px-4 py-3 text-red-600 font-semibold hover:text-red-700">Admin</Link>
+                <Link to="/admin/dashboard" className="block px-4 py-3 text-red-600 font-semibold hover:text-red-700">Admin</Link>
               )}
               <button
                 onClick={handleLogout}
