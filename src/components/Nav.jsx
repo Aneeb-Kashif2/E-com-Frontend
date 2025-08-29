@@ -10,6 +10,7 @@ const Nav = ({ user, onLogout }) => {
 
   const isLoggedIn = !!user;
   const isAdmin = user?.role === "admin";
+  const isSubAdmin = user?.role === "subadmin"; // New: Check for subadmin role
 
   const handleLogout = () => {
     onLogout();
@@ -38,8 +39,12 @@ const Nav = ({ user, onLogout }) => {
           {isLoggedIn && (
             <>
               <Link to="/orders" className="text-gray-600 hover:text-indigo-600">My Orders</Link>
+              {/* Conditional link for admin or subadmin */}
               {isAdmin && (
-                <Link to="/admin" className="text-red-600 font-semibold hover:text-red-700">Admin</Link>
+                <Link to="/admin/dashboard" className="text-red-600 font-semibold hover:text-red-700">Admin</Link>
+              )}
+              {isSubAdmin && (
+                <Link to="/subadmin" className="text-red-600 font-semibold hover:text-red-700">Subadmin</Link>
               )}
             </>
           )}
@@ -71,17 +76,16 @@ const Nav = ({ user, onLogout }) => {
           )}
 
          {/* Cart */}
-<button
-  aria-label="Shopping Cart"
-  className="text-gray-600 hover:text-indigo-600 relative"
-  onClick={() => navigate("/cart")} // ✅ navigate to /cart on click
->
-  <ShoppingCart size={20} />
-  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
-    {cartCount}
-  </span>
-</button>
-
+          <button
+            aria-label="Shopping Cart"
+            className="text-gray-600 hover:text-indigo-600 relative"
+            onClick={() => navigate("/cart")}
+          >
+            <ShoppingCart size={20} />
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-4 h-4 rounded-full flex items-center justify-center">
+              {cartCount}
+            </span>
+          </button>
 
           {/* Mobile menu */}
           <button
@@ -105,8 +109,12 @@ const Nav = ({ user, onLogout }) => {
           {isLoggedIn ? (
             <>
               <Link to="/orders" className="block px-4 py-3 text-gray-600 hover:text-indigo-600">My Orders</Link>
+              {/* Conditional link for admin or subadmin in mobile menu */}
               {isAdmin && (
                 <Link to="/admin/dashboard" className="block px-4 py-3 text-red-600 font-semibold hover:text-red-700">Admin</Link>
+              )}
+              {isSubAdmin && (
+                <Link to="/subadmin" className="block px-4 py-3 text-red-600 font-semibold hover:text-red-700">Subadmin</Link>
               )}
               <button
                 onClick={handleLogout}

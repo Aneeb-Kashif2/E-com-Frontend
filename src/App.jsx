@@ -15,16 +15,18 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Success from "./pages/Success";
 import AdminPanel from "./pages/admin/AdminAllFeatures";
-import SubAdmin from "./pages/admin/SubAdmin";
-
+import SubAdminPanel from "./pages/admin/SubAdminPanel";
 import { CartProvider } from "./context/CartContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import About from "./components/About";
 import Contact from "./components/Contact";
+import UserOrders from "./pages/UserOrders"; // New: Import the UserOrders component
+
 function App() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // ✅ Check token on mount
+  // Check token on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -36,12 +38,22 @@ function App() {
         setUser(null);
       }
     }
+    setLoading(false);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
   };
+
+  // Conditionally render based on loading state
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <h2>Loading...</h2>
+      </div>
+    );
+  }
 
   return (
     <Router>
@@ -53,7 +65,6 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          
           <Route path="/shop" element={<ShowAllProductsAndCartLogic />} />
           <Route path="/shop/all-products" element={<AllProduct />} />
           <Route path="/category/:categoryId" element={<CategoryProducts />} />
@@ -63,21 +74,28 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
 
-          {/* ✅ Protected Routes */}
+          {/* Protected Routes */}
           <Route
             path="/admin/dashboard"
             element={
-              <ProtectedRoute user={user} allowedRoles={["admin", "subadmin"]}>
+              <ProtectedRoute user={user} allowedRoles={["admin"]}>
                 <AdminPanel />
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/subadmin"
             element={
               <ProtectedRoute user={user} allowedRoles={["subadmin"]}>
-                <SubAdmin />
+                <SubAdminPanel />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute user={user} allowedRoles={["user", "admin", "subadmin"]}>
+                <UserOrders />
               </ProtectedRoute>
             }
           />
