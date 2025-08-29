@@ -131,50 +131,7 @@ const About = () => {
       </section>
 
       {/* Section 6 - Team */}
-      <section className="py-20 bg-white text-center">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          className="max-w-6xl mx-auto px-6"
-        >
-          <h2 className="text-4xl font-bold mb-10">Meet Our Team</h2>
-          <div className="grid md:grid-cols-3 gap-10">
-            {[
-              {
-                name: "Aneeb Kashif",
-                role: "Founder & Developer",
-                img: "https://randomuser.me/api/portraits/men/32.jpg",
-              },
-              {
-                name: "Sarah Ali",
-                role: "AI Specialist",
-                img: "https://randomuser.me/api/portraits/women/44.jpg",
-              },
-              {
-                name: "John Doe",
-                role: "Product Designer",
-                img: "https://randomuser.me/api/portraits/men/68.jpg",
-              },
-            ].map((member, i) => (
-              <motion.div
-                key={i}
-                whileHover={{ scale: 1.05 }}
-                className="bg-gray-100 p-6 rounded-2xl shadow-lg"
-              >
-                <img
-                  src={member.img}
-                  alt={member.name}
-                  className="w-32 h-32 mx-auto rounded-full mb-4"
-                />
-                <h3 className="text-xl font-semibold">{member.name}</h3>
-                <p className="text-gray-600">{member.role}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </section>
+      
     </div>
   );
 };
