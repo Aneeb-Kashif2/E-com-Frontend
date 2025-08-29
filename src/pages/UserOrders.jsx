@@ -20,12 +20,12 @@ const UserOrders = () => {
 
       try {
         const authHeaders = { Authorization: `Bearer ${token}` };
-        // ✅ Corrected endpoint
-        const response = await axios.get("http://localhost:8000/orders/my-orders", { headers: authHeaders });
-        // The API now returns the array directly, so no need for `response.data.data`
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/orders/my-orders`,
+          { headers: authHeaders }
+        );
         setOrders(response.data);
       } catch (err) {
-        console.error("Failed to fetch user orders:", err.response?.data || err.message);
         setError("Failed to load your orders. Please try again later.");
       } finally {
         setLoading(false);
@@ -59,7 +59,13 @@ const UserOrders = () => {
           <div className="text-center py-12 text-gray-500">
             <FaBoxOpen className="mx-auto text-5xl mb-4" />
             <p className="text-lg">You haven't placed any orders yet.</p>
-            <p className="text-sm mt-2">Go to the <a href="/shop" className="text-indigo-600 hover:underline">shop</a> to find something you'll love!</p>
+            <p className="text-sm mt-2">
+              Go to the{" "}
+              <a href="/shop" className="text-indigo-600 hover:underline">
+                shop
+              </a>{" "}
+              to find something you'll love!
+            </p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -67,12 +73,24 @@ const UserOrders = () => {
               <div key={order._id} className="border-b pb-4 last:border-b-0">
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h2 className="text-lg font-semibold">Order ID: {order._id}</h2>
-                    <p className="text-sm text-gray-600">Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                    <h2 className="text-lg font-semibold">
+                      Order ID: {order._id}
+                    </h2>
+                    <p className="text-sm text-gray-600">
+                      Date: {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
                   <div className="text-right">
-                    <p className="font-bold text-xl text-green-600">${order.totalPrice}</p>
-                    <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full mt-1 ${order.status === 'Delivered' ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}>
+                    <p className="font-bold text-xl text-green-600">
+                      ${order.totalPrice}
+                    </p>
+                    <span
+                      className={`inline-block px-2 py-1 text-xs font-semibold rounded-full mt-1 ${
+                        order.status === "Delivered"
+                          ? "bg-green-200 text-green-800"
+                          : "bg-yellow-200 text-yellow-800"
+                      }`}
+                    >
                       {order.status}
                     </span>
                   </div>
@@ -82,7 +100,8 @@ const UserOrders = () => {
                   <ul className="list-disc pl-5">
                     {order.items.map((item) => (
                       <li key={item._id}>
-                        {item.quantity} x {item.product?.name || item.product} - ${item.product?.price || 'N/A'} each
+                        {item.quantity} x {item.product?.name || item.product} - $
+                        {item.product?.price || "N/A"} each
                       </li>
                     ))}
                   </ul>

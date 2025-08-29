@@ -9,7 +9,9 @@ function AllProduct() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/all-products");
+      const res = await axios.get(
+        import.meta.env.VITE_API_BASE_URL + "/all-products"
+      );
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products:", err);
@@ -99,8 +101,7 @@ function AllProduct() {
                     </span>
                   </p>
                   <p className="text-sm text-gray-500 mb-3">
-                    Brand:{" "}
-                    <span className="font-medium">{product.brand}</span>
+                    Brand: <span className="font-medium">{product.brand}</span>
                   </p>
                 </div>
 

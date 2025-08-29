@@ -9,41 +9,37 @@ function Login({ setUser }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-   const { fetchCart } = useCart(); 
+  const { fetchCart } = useCart();
 
   const UserLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post(
-      "http://localhost:8000/login", 
-      { email, password },
-      { withCredentials: true }
-    );
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/login`,
+        { email, password },
+        { withCredentials: true }
+      );
 
-    setMessage(response.data.message || "Login successful 🎉");
-    
-    const token = response.data.token;
-    if (token) {
-      localStorage.setItem("token", token);
-      const decoded = jwtDecode(token);
-      setUser(decoded);
+      setMessage(response.data.message || "Login successful 🎉");
 
-      // Fetch cart after login
-      await fetchCart();
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem("token", token);
+        const decoded = jwtDecode(token);
+        setUser(decoded);
 
-      // Redirect based on role
-      if (decoded.role === "admin" || decoded.role === "subadmin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/");
+        await fetchCart();
+
+        if (decoded.role === "admin" || decoded.role === "subadmin") {
+          navigate("/admin/dashboard");
+        } else {
+          navigate("/");
+        }
       }
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Login failed ❌");
     }
-  } catch (err) {
-    console.error("Error:", err);
-    setMessage(err.response?.data?.message || "Login failed ❌");
-  }
-};
-
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900">

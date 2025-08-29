@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import axios from 'axios';
+import React, { useState } from "react";
+import axios from "axios";
 
 function Signup() {
   const [name, setName] = useState("");
@@ -12,17 +12,18 @@ function Signup() {
   const takeData = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8000/signup", {
-        name,
-        username: userName,
-        email,
-        dateOfBirth,
-        password,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/signup`,
+        {
+          name,
+          username: userName,
+          email,
+          dateOfBirth,
+          password,
+        }
+      );
       setMessage(response.data.message || "Signup successful 🎉");
-      console.log("Response:", response.data);
     } catch (err) {
-      console.error("Error:", err);
       setMessage("Signup failed ❌");
     }
   };
@@ -93,7 +94,10 @@ function Signup() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Already have an account?{" "}
-          <a href="/login" className="text-indigo-600 font-medium hover:underline">
+          <a
+            href="/login"
+            className="text-indigo-600 font-medium hover:underline"
+          >
             Login
           </a>
         </p>

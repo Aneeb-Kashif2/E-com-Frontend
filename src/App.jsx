@@ -1,3 +1,5 @@
+// src/App.jsx
+
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -20,13 +22,12 @@ import { CartProvider } from "./context/CartContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import About from "./components/About";
 import Contact from "./components/Contact";
-import UserOrders from "./pages/UserOrders"; // New: Import the UserOrders component
+import UserOrders from "./pages/UserOrders";
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check token on mount
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -34,7 +35,6 @@ function App() {
         const decoded = jwtDecode(token);
         setUser(decoded);
       } catch (err) {
-        console.error("Invalid token", err);
         setUser(null);
       }
     }
@@ -46,10 +46,9 @@ function App() {
     setUser(null);
   };
 
-  // Conditionally render based on loading state
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div className="flex justify-center items-center h-screen">
         <h2>Loading...</h2>
       </div>
     );
@@ -61,7 +60,6 @@ function App() {
         <Nav user={user} onLogout={handleLogout} />
 
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
@@ -74,7 +72,6 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login setUser={setUser} />} />
 
-          {/* Protected Routes */}
           <Route
             path="/admin/dashboard"
             element={

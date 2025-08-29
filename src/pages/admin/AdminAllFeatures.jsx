@@ -2,47 +2,25 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaUserPlus, FaTags, FaBoxOpen, FaUsers, FaClipboardList, FaTrash, FaEdit } from "react-icons/fa";
 
-// Single-file Admin Panel (Tailwind CSS assumed)
-// This component provides a compact admin UI with tabs for:
-// - Users (list, delete)
-// - Subadmins (create, list, assign categories)
-// - Categories (create, list, delete)
-// - Products (create, list, edit, delete)
-// - Orders (list, filter by category)
-// NOTE: After you paste this file into your project you can split it into smaller components.
-
 export default function AdminPanel() {
   const token = localStorage.getItem("token");
   const authHeaders = { Authorization: `Bearer ${token}` };
 
   const [tab, setTab] = useState("dashboard");
-
-  // Users
   const [users, setUsers] = useState([]);
-
-  // Subadmins
   const [subadmins, setSubadmins] = useState([]);
   const [newSubadmin, setNewSubadmin] = useState({ name: "", email: "", password: "", assignedCategories: [] });
-
-  // Categories
   const [categories, setCategories] = useState([]);
   const [categoryForm, setCategoryForm] = useState({ name: "", description: "" });
-
-  // Products
   const [products, setProducts] = useState([]);
   const [productForm, setProductForm] = useState({ name: "", description: "", price: "", category: "", brand: "", stock: "", images: "" });
   const [editingProduct, setEditingProduct] = useState(null);
-
-  // Orders
   const [orders, setOrders] = useState([]);
   const [selectedCategoryForOrders, setSelectedCategoryForOrders] = useState("");
-
-  // UI
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
-    // initial load
     fetchAll();
   }, []);
 
@@ -54,41 +32,32 @@ export default function AdminPanel() {
       fetchProducts(),
       fetchOrders(),
       fetchSubadmins(),
-    ]).catch((e) => console.error(e));
+    ]).catch(() => {});
     setLoading(false);
   };
 
-  // -------- Users --------
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/users", { headers: authHeaders });
+      const res = await axios.get(import.meta.env.VITE_API_BASE_URL + "/users", { headers: authHeaders });
       setUsers(res.data);
-    } catch (err) {
-      console.error("fetchUsers", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
   const deleteUser = async (userId) => {
     if (!confirm("Delete this user permanently?")) return;
     try {
-      await axios.delete(`http://localhost:8000/users/${userId}`, { headers: authHeaders });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/users/${userId}`, { headers: authHeaders });
       setMessage("User deleted");
       fetchUsers();
-    } catch (err) {
-      console.error("deleteUser", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
-  // -------- Subadmins --------
   const fetchSubadmins = async () => {
     try {
-      // This endpoint may be the same as /users but filtered on backend; we'll call /users and filter here
-      const res = await axios.get("http://localhost:8000/users", { headers: authHeaders });
+      const res = await axios.get(import.meta.env.VITE_API_BASE_URL + "/users", { headers: authHeaders });
       const subs = res.data.filter((u) => u.role === "subadmin");
       setSubadmins(subs);
-    } catch (err) {
-      console.error("fetchSubadmins", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
   const createSubadmin = async () => {
@@ -98,19 +67,16 @@ export default function AdminPanel() {
     }
     try {
       const payload = { ...newSubadmin };
-      // ensure assignedCategories is array of ids
       if (!Array.isArray(payload.assignedCategories)) payload.assignedCategories = [];
-      const res = await axios.post("http://localhost:8000/subadmin", payload, { headers: authHeaders });
+      await axios.post(import.meta.env.VITE_API_BASE_URL + "/subadmin", payload, { headers: authHeaders });
       setMessage("Subadmin created");
       setNewSubadmin({ name: "", email: "", password: "", assignedCategories: [] });
       fetchSubadmins();
     } catch (err) {
-      console.error("createSubadmin", err.response?.data || err.message);
       alert(err.response?.data?.message || "Failed to create subadmin");
     }
   };
 
-  // assign categories to subadmin locally (multi-select)
   const toggleAssignCategory = (catId) => {
     setNewSubadmin((prev) => {
       const exists = prev.assignedCategories.includes(catId);
@@ -121,53 +87,41 @@ export default function AdminPanel() {
     });
   };
 
-  // -------- Categories --------
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/categories", { headers: authHeaders });
+      const res = await axios.get(import.meta.env.VITE_API_BASE_URL + "/categories", { headers: authHeaders });
       setCategories(res.data);
+    } catch (err) {}
+  };
+
+  const createCategory = async () => {
+    if (!categoryForm.name) return alert("Category name required");
+    try {
+      await axios.post(import.meta.env.VITE_API_BASE_URL + "/category", categoryForm, { headers: authHeaders });
+      setCategoryForm({ name: "", description: "" });
+      setMessage("Category created");
+      fetchCategories();
     } catch (err) {
-      console.error("fetchCategories", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Failed to create category");
     }
   };
 
- // Create category
-const createCategory = async () => {
-  if (!categoryForm.name) return alert("Category name required");
-  try {
-    const res = await axios.post("http://localhost:8000/category", categoryForm, { headers: authHeaders });
-    setCategoryForm({ name: "", description: "" });
-    setMessage("Category created");
-    fetchCategories();
-  } catch (err) {
-    console.error("createCategory", err.response?.data || err.message);
-    alert(err.response?.data?.message || "Failed to create category");
-  }
-};
+  const deleteCategory = async (catId) => {
+    if (!confirm("Delete category? This might affect products.")) return;
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/category/${catId}`, { headers: authHeaders });
+      setMessage("Category deleted");
+      fetchCategories();
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to delete category");
+    }
+  };
 
-// Delete category
-const deleteCategory = async (catId) => {
-  if (!confirm("Delete category? This might affect products.")) return;
-  try {
-    // Change the URL from /categories to /category
-    await axios.delete(`http://localhost:8000/category/${catId}`, { headers: authHeaders });
-    setMessage("Category deleted");
-    fetchCategories();
-  } catch (err) {
-    console.error("deleteCategory", err.response?.data || err.message);
-    alert(err.response?.data?.message || "Failed to delete category");
-  }
-};
-
-
-  // -------- Products --------
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/products", { headers: authHeaders });
+      const res = await axios.get(import.meta.env.VITE_API_BASE_URL + "/products", { headers: authHeaders });
       setProducts(res.data);
-    } catch (err) {
-      console.error("fetchProducts", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
   const startEditProduct = (p) => {
@@ -185,11 +139,9 @@ const deleteCategory = async (catId) => {
   };
 
   const saveProduct = async () => {
-    // validate
     if (!productForm.name || !productForm.description || !productForm.price || !productForm.category) {
       return alert("Name, description, price and category are required");
     }
-
     const payload = {
       name: productForm.name,
       description: productForm.description,
@@ -199,20 +151,18 @@ const deleteCategory = async (catId) => {
       stock: Number(productForm.stock || 0),
       images: productForm.images ? productForm.images.split(",").map((s) => s.trim()) : [],
     };
-
     try {
       if (editingProduct) {
-        await axios.put(`http://localhost:8000/products/${editingProduct._id}`, payload, { headers: authHeaders });
+        await axios.put(`${import.meta.env.VITE_API_BASE_URL}/products/${editingProduct._id}`, payload, { headers: authHeaders });
         setMessage("Product updated");
         setEditingProduct(null);
       } else {
-        await axios.post(`http://localhost:8000/products`, payload, { headers: authHeaders });
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/products`, payload, { headers: authHeaders });
         setMessage("Product created");
       }
       setProductForm({ name: "", description: "", price: "", category: "", brand: "", stock: "", images: "" });
       fetchProducts();
     } catch (err) {
-      console.error("saveProduct", err.response?.data || err.message);
       alert(err.response?.data?.message || "Failed to save product");
     }
   };
@@ -220,34 +170,26 @@ const deleteCategory = async (catId) => {
   const deleteProduct = async (id) => {
     if (!confirm("Delete this product?")) return;
     try {
-      await axios.delete(`http://localhost:8000/products/${id}`, { headers: authHeaders });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/products/${id}`, { headers: authHeaders });
       setMessage("Product deleted");
       fetchProducts();
-    } catch (err) {
-      console.error("deleteProduct", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
-  // -------- Orders --------
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/orders", { headers: authHeaders });
+      const res = await axios.get(import.meta.env.VITE_API_BASE_URL + "/orders", { headers: authHeaders });
       setOrders(res.data);
-    } catch (err) {
-      console.error("fetchOrders", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
   const fetchOrdersByCategory = async (catId) => {
     try {
-      const res = await axios.get(`http://localhost:8000/orders/category/${catId}`, { headers: authHeaders });
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/orders/category/${catId}`, { headers: authHeaders });
       setOrders(res.data);
-    } catch (err) {
-      console.error("fetchOrdersByCategory", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
-  // -------- Render helpers --------
   const renderTabs = () => (
     <div className="flex gap-2 flex-wrap">
       <button onClick={() => setTab("dashboard")} className={`px-3 py-2 rounded ${tab === "dashboard" ? "bg-indigo-600 text-white" : "bg-white"}`}>Dashboard</button>
@@ -266,14 +208,10 @@ const deleteCategory = async (catId) => {
           <h1 className="text-2xl font-bold">Admin Panel</h1>
           <div className="space-x-2">{renderTabs()}</div>
         </header>
-
         {message && (
           <div className="mb-4 p-3 bg-green-100 text-green-800 rounded">{message}</div>
         )}
-
         {loading && <div className="mb-4">Loading...</div>}
-
-        {/* Dashboard */}
         {tab === "dashboard" && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white p-4 rounded shadow">
@@ -290,8 +228,6 @@ const deleteCategory = async (catId) => {
             </div>
           </div>
         )}
-
-        {/* Users tab */}
         {tab === "users" && (
           <div className="bg-white rounded p-4 shadow">
             <h2 className="text-xl font-semibold mb-4">All Users</h2>
@@ -321,8 +257,6 @@ const deleteCategory = async (catId) => {
             </div>
           </div>
         )}
-
-        {/* Subadmins tab */}
         {tab === "subadmins" && (
           <div className="bg-white rounded p-4 shadow space-y-6">
             <div>
@@ -344,7 +278,6 @@ const deleteCategory = async (catId) => {
                 </div>
               </div>
             </div>
-
             <div>
               <h2 className="text-xl font-semibold mb-2">Subadmins</h2>
               <div className="overflow-x-auto">
@@ -370,8 +303,6 @@ const deleteCategory = async (catId) => {
             </div>
           </div>
         )}
-
-        {/* Categories tab */}
         {tab === "categories" && (
           <div className="bg-white rounded p-4 shadow space-y-6">
             <div>
@@ -382,7 +313,6 @@ const deleteCategory = async (catId) => {
                 <button onClick={createCategory} className="bg-indigo-600 text-white px-4 py-2 rounded">Add</button>
               </div>
             </div>
-
             <div>
               <h2 className="text-xl font-semibold mb-2">All Categories</h2>
               <div className="overflow-x-auto">
@@ -410,8 +340,6 @@ const deleteCategory = async (catId) => {
             </div>
           </div>
         )}
-
-        {/* Products tab */}
         {tab === "products" && (
           <div className="bg-white rounded p-4 shadow space-y-6">
             <div>
@@ -435,7 +363,6 @@ const deleteCategory = async (catId) => {
                 </div>
               </div>
             </div>
-
             <div>
               <h2 className="text-xl font-semibold mb-2">All Products</h2>
               <div className="overflow-x-auto">
@@ -468,8 +395,6 @@ const deleteCategory = async (catId) => {
             </div>
           </div>
         )}
-
-        {/* Orders tab */}
         {tab === "orders" && (
           <div className="bg-white rounded p-4 shadow space-y-6">
             <div className="flex items-center gap-3">
@@ -479,7 +404,6 @@ const deleteCategory = async (catId) => {
                 {categories.map((c) => <option key={c._id} value={c._id}>{c.name}</option>)}
               </select>
             </div>
-
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
@@ -512,7 +436,6 @@ const deleteCategory = async (catId) => {
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

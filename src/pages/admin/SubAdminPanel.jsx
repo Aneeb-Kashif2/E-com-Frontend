@@ -6,14 +6,13 @@ import { jwtDecode } from "jwt-decode";
 export default function SubAdminPanel() {
   const token = localStorage.getItem("token");
   const authHeaders = { Authorization: `Bearer ${token}` };
-
   const [tab, setTab] = useState("products");
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [productForm, setProductForm] = useState({ name: "", description: "", price: "", category: "", brand: "", stock: "", images: "" });
   const [editingProduct, setEditingProduct] = useState(null);
   const [orders, setOrders] = useState([]);
-  const [allSubadminOrders, setAllSubadminOrders] = useState([]); // Store all orders for local filtering
+  const [allSubadminOrders, setAllSubadminOrders] = useState([]);
   const [selectedCategoryForOrders, setSelectedCategoryForOrders] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
@@ -24,9 +23,7 @@ export default function SubAdminPanel() {
       try {
         const decoded = jwtDecode(token);
         setAssignedCategories(decoded.assignedCategories || []);
-      } catch (e) {
-        console.error("Failed to decode token", e);
-      }
+      } catch (e) {}
     }
     fetchInitialData();
   }, [token]);
@@ -37,28 +34,22 @@ export default function SubAdminPanel() {
       fetchCategories(),
       fetchProducts(),
       fetchOrdersForSubadmin(),
-    ]).catch((e) => console.error(e));
+    ]).catch(() => {});
     setLoading(false);
   };
 
-  // -------- Categories --------
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/categories", { headers: authHeaders });
+      const res = await axios.get(import.meta.env.VITE_API_BASE_URL + "/categories", { headers: authHeaders });
       setCategories(res.data);
-    } catch (err) {
-      console.error("fetchCategories", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
-  // -------- Products --------
   const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/products", { headers: authHeaders });
+      const res = await axios.get(import.meta.env.VITE_API_BASE_URL + "/products", { headers: authHeaders });
       setProducts(res.data);
-    } catch (err) {
-      console.error("fetchProducts", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
   const startEditProduct = (p) => {
@@ -79,7 +70,6 @@ export default function SubAdminPanel() {
     if (!productForm.name || !productForm.description || !productForm.price || !productForm.category) {
       return alert("Name, description, price, and category are required");
     }
-
     const payload = {
       name: productForm.name,
       description: productForm.description,
@@ -89,20 +79,18 @@ export default function SubAdminPanel() {
       stock: Number(productForm.stock || 0),
       images: productForm.images ? productForm.images.split(",").map((s) => s.trim()) : [],
     };
-
     try {
       if (editingProduct) {
-        await axios.put(`http://localhost:8000/products/${editingProduct._id}`, payload, { headers: authHeaders });
+        await axios.put(`${import.meta.env.VITE_API_BASE_URL}/products/${editingProduct._id}`, payload, { headers: authHeaders });
         setMessage("Product updated");
         setEditingProduct(null);
       } else {
-        await axios.post(`http://localhost:8000/products`, payload, { headers: authHeaders });
+        await axios.post(`${import.meta.env.VITE_API_BASE_URL}/products`, payload, { headers: authHeaders });
         setMessage("Product created");
       }
       setProductForm({ name: "", description: "", price: "", category: "", brand: "", stock: "", images: "" });
       fetchProducts();
     } catch (err) {
-      console.error("saveProduct", err.response?.data || err.message);
       alert(err.response?.data?.message || "Failed to save product");
     }
   };
@@ -110,15 +98,12 @@ export default function SubAdminPanel() {
   const deleteProduct = async (id) => {
     if (!confirm("Delete this product?")) return;
     try {
-      await axios.delete(`http://localhost:8000/products/${id}`, { headers: authHeaders });
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/products/${id}`, { headers: authHeaders });
       setMessage("Product deleted");
       fetchProducts();
-    } catch (err) {
-      console.error("deleteProduct", err.response?.data || err.message);
-    }
+    } catch (err) {}
   };
 
-  // -------- Orders --------
   const fetchOrdersForSubadmin = async () => {
     try {
       if (assignedCategories.length === 0) {
@@ -126,22 +111,16 @@ export default function SubAdminPanel() {
         setAllSubadminOrders([]);
         return;
       }
-
       const orderPromises = assignedCategories.map(catId => 
-        axios.get(`http://localhost:8000/orders/category/${catId}`, { headers: authHeaders })
+        axios.get(`${import.meta.env.VITE_API_BASE_URL}/orders/category/${catId}`, { headers: authHeaders })
       );
-
       const responses = await Promise.all(orderPromises);
       const allFetchedOrders = responses.flatMap(res => res.data);
-      
       const uniqueOrders = Array.from(new Set(allFetchedOrders.map(o => o._id)))
-                               .map(id => allFetchedOrders.find(o => o._id === id));
-      
+        .map(id => allFetchedOrders.find(o => o._id === id));
       setOrders(uniqueOrders);
-      setAllSubadminOrders(uniqueOrders); // Store for local filtering
-    } catch (err) {
-      console.error("fetchOrdersForSubadmin", err.response?.data || err.message);
-    }
+      setAllSubadminOrders(uniqueOrders);
+    } catch (err) {}
   };
 
   const handleOrderCategoryFilter = (catId) => {
@@ -152,11 +131,10 @@ export default function SubAdminPanel() {
       );
       setOrders(filtered);
     } else {
-      setOrders(allSubadminOrders); // Reset to all
+      setOrders(allSubadminOrders);
     }
   };
 
-  // -------- Render helpers --------
   const renderTabs = () => (
     <div className="flex gap-2 flex-wrap">
       <button onClick={() => setTab("products")} className={`px-3 py-2 rounded ${tab === "products" ? "bg-indigo-600 text-white" : "bg-white"}`}>
@@ -175,14 +153,10 @@ export default function SubAdminPanel() {
           <h1 className="text-2xl font-bold">Sub-Admin Panel</h1>
           <div className="space-x-2">{renderTabs()}</div>
         </header>
-
         {message && (
           <div className="mb-4 p-3 bg-green-100 text-green-800 rounded">{message}</div>
         )}
-
         {loading && <div className="mb-4">Loading...</div>}
-
-        {/* Products tab */}
         {tab === "products" && (
           <div className="bg-white rounded p-4 shadow space-y-6">
             <div>
@@ -206,7 +180,6 @@ export default function SubAdminPanel() {
                 </div>
               </div>
             </div>
-
             <div>
               <h2 className="text-xl font-semibold mb-2">All Products</h2>
               <div className="overflow-x-auto">
@@ -239,8 +212,6 @@ export default function SubAdminPanel() {
             </div>
           </div>
         )}
-
-        {/* Orders tab */}
         {tab === "orders" && (
           <div className="bg-white rounded p-4 shadow space-y-6">
             <div className="flex items-center gap-3">
@@ -252,7 +223,6 @@ export default function SubAdminPanel() {
                 ))}
               </select>
             </div>
-
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>

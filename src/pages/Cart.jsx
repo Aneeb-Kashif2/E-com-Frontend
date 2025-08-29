@@ -9,13 +9,16 @@ const Cart = () => {
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
-  const { fetchCart: fetchCartContext } = useCart(); // ✅ get context fetchCart
+  const { fetchCart: fetchCartContext } = useCart();
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/cart", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        import.meta.env.VITE_API_BASE_URL + "/cart",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setCart(res.data.items || []);
     } catch (error) {
       setCart([]);
@@ -27,19 +30,19 @@ const Cart = () => {
   const updateQuantity = async (productId, quantity) => {
     try {
       const res = await axios.put(
-        "http://localhost:8000/cart/update",
+        import.meta.env.VITE_API_BASE_URL + "/cart/update",
         { productId, quantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCart(res.data.cart.items);
-      fetchCartContext(); // ✅ update navbar dynamically
+      fetchCartContext();
     } catch (error) {}
   };
 
   const removeItem = async (productId) => {
     try {
       const res = await axios.delete(
-        `http://localhost:8000/cart/remove/${productId}`,
+        `${import.meta.env.VITE_API_BASE_URL}/cart/remove/${productId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCart(res.data.cart.items);
