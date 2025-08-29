@@ -13,6 +13,9 @@ const Success = () => {
   // Get token from localStorage
   const token = localStorage.getItem("token");
 
+  // Backend URL from .env
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionId = params.get("session_id");
@@ -27,7 +30,7 @@ const Success = () => {
     const verifyOrder = async () => {
       try {
         const res = await axios.post(
-          "http://localhost:8000/verify-order",
+          `${API_BASE_URL}/verify-order`,
           { session_id: sessionId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -35,14 +38,17 @@ const Success = () => {
         setOrder(res.data.order);
         setLoading(false);
       } catch (err) {
-        console.error("❌ Order verification failed:", err.response?.data || err.message);
+        console.error(
+          "❌ Order verification failed:",
+          err.response?.data || err.message
+        );
         setError(err.response?.data?.message || "Order verification failed.");
         setLoading(false);
       }
     };
 
     verifyOrder();
-  }, [location.search, token]);
+  }, [location.search, token, API_BASE_URL]);
 
   if (loading) {
     return (
