@@ -107,7 +107,7 @@ export const FeaturedCategories = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.get(`${API_BASE}/categories`);
+        const { data } = await axios.get(`${VITE_API_BASE_URL}/categories`);
         setCategories(data || []);
       } catch (e) {
         setError("Failed to load categories");
