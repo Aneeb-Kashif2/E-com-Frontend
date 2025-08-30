@@ -10,12 +10,11 @@ const Success = () => {
   const [error, setError] = useState("");
   const location = useLocation();
 
-  // Get token if logged in
+  // Get token from localStorage
   const token = localStorage.getItem("token");
 
-  // API base from .env (must be set in Netlify dashboard too)
-  const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+  // Backend URL from .env
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -30,31 +29,20 @@ const Success = () => {
     // Verify order with backend
     const verifyOrder = async () => {
       try {
-        const headers = {};
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
-        }
-
         const res = await axios.post(
           `${API_BASE_URL}/verify-order`,
           { session_id: sessionId },
-          { headers }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        // handle different response formats
-        if (res.data?.order) {
-          setOrder(res.data.order);
-        } else if (res.data?.success && res.data?.data) {
-          setOrder(res.data.data);
-        } else {
-          setError("Order not found in server response.");
-        }
+        setOrder(res.data.order);
+        setLoading(false);
       } catch (err) {
-        console.error("❌ Order verification failed:", err);
-        setError(
-          err.response?.data?.message || "Order verification failed."
+        console.error(
+          "❌ Order verification failed:",
+          err.response?.data || err.message
         );
-      } finally {
+        setError(err.response?.data?.message || "Order verification failed.");
         setLoading(false);
       }
     };
@@ -106,7 +94,7 @@ const Success = () => {
                 </p>
               </>
             ) : (
-              <p className="text-red-500">⚠️ Could not load order details.</p>
+              <p className="text-red-500">⚠️ Could not create order.</p>
             )}
           </>
         )}
