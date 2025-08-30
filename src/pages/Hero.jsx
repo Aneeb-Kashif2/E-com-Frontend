@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { motion } from "framer-motion";
 
-const API_BASE = import.meta?.env?.VITE_API_BASE || "http://localhost:8000";
+const API_BASE = import.meta?.env?.VITE_API_BASE_URL || "http://localhost:8000";
 const currency = (n) =>
   new Intl.NumberFormat("en-PK", { style: "currency", currency: "PKR", maximumFractionDigits: 0 }).format(
     Number(n || 0)
@@ -107,7 +107,7 @@ export const FeaturedCategories = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await axios.get(`${VITE_API_BASE_URL}/categories`);
+        const { data } = await axios.get(`${API_BASE}/categories`);
         setCategories(data || []);
       } catch (e) {
         setError("Failed to load categories");
