@@ -1,0 +1,136 @@
+A full-stack E-commerce platform built with the MERN stack that allows users to browse products, add them to a cart, checkout with Stripe payment integration, and manage orders. Includes an Admin Dashboard for product, user, and order management.
+
+🚀 Features
+👤 User Features
+
+🔐 User authentication with JWT (Signup, Login, Google OAuth).
+
+🛒 Add to Cart, Wishlist, and Remove from Cart.
+
+💳 Secure checkout with Stripe Payment Gateway.
+
+📦 Order history and details.
+
+🔍 Search and filter products by category.
+
+🎨 Responsive UI with React & Tailwind CSS.
+
+🛠️ Admin Features
+
+📊 Admin Dashboard to manage the store.
+
+👥 Manage all users (View, Delete).
+
+🛍️ CRUD operations for products (Add, Update, Delete).
+
+📂 Category management.
+
+📑 View and manage all orders.
+
+🏗️ Tech Stack
+
+Frontend:
+
+React.js
+
+React Router
+
+Tailwind CSS
+
+Axios
+
+Backend:
+
+Node.js
+
+Express.js
+
+MongoDB (Mongoose ODM)
+
+JWT Authentication
+
+Stripe Payment Integration
+
+Other Tools:
+
+bcryptjs for password hashing
+
+dotenv for environment variables
+
+Vercel & Netlify for deployment
+
+
+How to Run the Project Locally
+
+Follow these steps to run the project on your own computer:
+
+1️⃣ Clone the repository
+git clone https://github.com/your-username/ecommerce-website.git
+cd ecommerce-website
+
+2️⃣ Setup the Backend
+cd backend
+npm install
+
+
+Create a .env file inside /backend with the following content:
+
+PORT=8000
+MONGO_URI=your_mongodb_connection_string
+SECRET_KEY=your_jwt_secret
+STRIPE_SECRET_KEY=your_stripe_secret
+
+
+Run the backend server:
+
+npm start
+
+
+By default, the backend will run on http://localhost:8000
+.
+
+3️⃣ Setup the Frontend
+
+Open a new terminal and navigate to the frontend:
+
+cd frontend
+npm install
+
+
+Create a .env file inside /frontend with the following content:
+
+VITE_API_BASE_URL=http://localhost:8000
+VITE_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
+
+
+Run the frontend:
+
+npm run dev
+
+
+The frontend will run on http://localhost:5173
+ (or a similar port).
+
+4️⃣ Test the App
+
+Open http://localhost:5173
+ in your browser.
+
+Sign up as a user and try adding products to the cart.
+
+Login as an admin (create an admin manually in the database if required).
+
+Test checkout flow with Stripe test cards like:
+
+Card Number: 4242 4242 4242 4242  
+Expiry: 12/34  
+CVC: 123  
+
+🌐 Deployment
+
+Frontend: Hosted on Netlify
+
+Backend: Hosted on Render/Vercel
+
+Update .env in frontend with deployed backend URL.
+
