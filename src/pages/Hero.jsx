@@ -17,31 +17,48 @@ const sectionFade = {
 /***********************************
  * Hero Section
  ***********************************/
+
+
+
+
+
 export const Hero = () => {
   const slides = [
     {
       id: 1,
-      backgroundImage: "url('/hero.png')",
-      title: "Fresh Groceries, Delivered to You",
-      description: "Get vegetables, fruits, and daily essentials at the best prices.",
-      buttonText: "Shop Fresh Produce",
-      onClick: () => document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" }),
+      backgroundImage: "/Fashion-Hero.jpg",
+      title: "Trendy Fashion, Unbeatable Prices",
+      description: "Discover the latest clothing & accessories for every season.",
+      buttonText: "Shop Fashion",
+      onClick: () =>
+        document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" }),
     },
     {
       id: 2,
-      backgroundImage: "url('/BudgetPlanner.png')",
-      title: "Smart Grocery Planning",
-      description: "Enter your budget and let AI plan your monthly groceries.",
-      buttonText: "Try Budget Planner",
-      onClick: () => document.getElementById("planner")?.scrollIntoView({ behavior: "smooth" }),
+      backgroundImage: "https://img.freepik.com/free-photo/man-taking-care-home-delivering-groceries_52683-102848.jpg",
+      title: "Fresh Groceries, Delivered to You",
+      description: "Convenience delivered right when you need it.",
+      buttonText: "Shop Groceries",
+      onClick: () =>
+        document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" }),
     },
     {
       id: 3,
-      backgroundImage: "url('/hero.png')",
-      title: "Household Essentials",
-      description: "Cleaning supplies, oils, rice, and more — everything in one place.",
-      buttonText: "Shop Essentials",
-      onClick: () => document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" }),
+      backgroundImage: "/Electronic-Hero.jpg",
+      title: "Latest Electronics & Gadgets",
+      description: "Upgrade your lifestyle with modern tech at the best deals.",
+      buttonText: "Shop Electronics",
+      onClick: () =>
+        document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" }),
+    },
+    {
+      id: 4,
+      backgroundImage: "/Medicen-Hero.jpg",
+      title: "Health & Medicines Online",
+      description: "Get trusted medicines and healthcare essentials hassle-free.",
+      buttonText: "Shop Medicines",
+      onClick: () =>
+        document.getElementById("categories")?.scrollIntoView({ behavior: "smooth" }),
     },
   ];
 
@@ -53,47 +70,65 @@ export const Hero = () => {
   }, [slides.length]);
 
   return (
-    <div className="relative w-full overflow-hidden rounded-xl shadow-lg mb-8">
-      <div className="relative h-96 md:h-[520px] lg:h-[620px]">
-        {slides.map((s, i) => (
-          <div
-            key={s.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${i === current ? "opacity-100" : "opacity-0"}`}
-            style={{ backgroundImage: s.backgroundImage, backgroundSize: "cover", backgroundPosition: "center" }}
-          >
-            <div className="absolute inset-0 bg-black/40 flex items-center p-8">
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-                className="max-w-xl text-left"
+    <div className="relative w-full h-[100vh] overflow-hidden mb-8">
+      {slides.map((s, i) => (
+        <div
+          key={s.id}
+          className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+            i === current ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          {/* Fullscreen Image */}
+          <img
+            src={s.backgroundImage}
+            alt={s.title}
+            className="w-full h-full object-cover"
+          />
+
+          {/* Content overlay */}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-2xl px-4"
+            >
+              <h2 className="text-white text-4xl md:text-6xl font-extrabold mb-4 drop-shadow-lg">
+                {s.title}
+              </h2>
+              <p className="text-gray-100 text-lg md:text-2xl mb-6 drop-shadow">
+                {s.description}
+              </p>
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={s.onClick}
+                className="bg-blue-600 text-white font-semibold py-3 px-10 rounded-full shadow-lg hover:bg-blue-700 transition-colors duration-300"
               >
-                <h2 className="text-white text-3xl md:text-5xl font-extrabold mb-4">{s.title}</h2>
-                <p className="text-gray-200 text-lg md:text-xl mb-6">{s.description}</p>
-                <motion.button
-                  whileTap={{ scale: 0.97 }}
-                  onClick={s.onClick}
-                  className="bg-blue-500 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-300"
-                >
-                  {s.buttonText}
-                </motion.button>
-              </motion.div>
-            </div>
+                {s.buttonText}
+              </motion.button>
+            </motion.div>
           </div>
-        ))}
-      </div>
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+        </div>
+      ))}
+
+      {/* Dots navigation */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
-            className={`w-3 h-3 rounded-full ${i === current ? "bg-blue-500 scale-125" : "bg-white/70"} transition`}
+            className={`w-3.5 h-3.5 rounded-full ${
+              i === current ? "bg-blue-600 scale-125" : "bg-white/70"
+            } transition`}
           />
         ))}
       </div>
     </div>
   );
 };
+
+
+
 
 /***********************************
  * Featured Categories
