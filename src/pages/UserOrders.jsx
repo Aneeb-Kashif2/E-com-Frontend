@@ -82,7 +82,7 @@ const UserOrders = () => {
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-xl text-green-600">
-                      ${order.totalPrice}
+                      Rs .{order.totalPrice}
                     </p>
                     <span
                       className={`inline-block px-2 py-1 text-xs font-semibold rounded-full mt-1 ${
